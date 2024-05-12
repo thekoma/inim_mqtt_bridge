@@ -1,0 +1,23 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+metadata:
+  name: inim-mqtt
+build:
+  artifacts:
+    - image: inim-mqtt
+      sync:
+        infer:
+          - inim_mqtt/*
+  local: {}
+manifests:
+  rawYaml:
+    - k8s/inim-mqtt-secret.yaml
+    - k8s/inim-mqtt-deployment.yaml
+    - k8s/inim-mqtt-service.yaml
+portForward:
+  - resourceType: deployment
+    resourceName: inim-mqtt
+    port: 5000
+    address: 0.0.0.0
+deploy:
+  kubectl: {}

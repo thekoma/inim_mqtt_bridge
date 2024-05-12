@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: inim-mqtt
+    group: inim-mqtt
+  name: inim-mqtt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scraper
+      group: inim-mqtt
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: scraper
+        group: inim-mqtt
+    spec:
+      containers:
+        - envFrom:
+          - secretRef:
+              name: inim-mqtt
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          image: inim-mqtt:latest
+          command: ["uvicorn", "main:app", "--reload" ,"--proxy-headers", "--port", "5000", "--host", "0.0.0.0", "--forwarded-allow-ips", "*"]
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - -f
+                - http://127.0.0.1:5000/ping
+            failureThreshold: 12
+            periodSeconds: 5
+            timeoutSeconds: 5
+          name: inim-mqtt
+          ports:
+            - containerPort: 5000
+      restartPolicy: Always

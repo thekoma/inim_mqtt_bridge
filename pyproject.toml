@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "inim-mqtt"
+version = "0.1.0"
+description = ""
+authors = ["Andrea Cervesato <andrea.cervesato@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+orjson = "^3.10.3"
+python-dotenv = "^1.0.1"
+fastapi = "^0.111.0"
+requests = "^2.31.0"
+asyncio = "^3.4.3"
+aiohttp = "^3.9.5"
+redis = "^5.0.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+package-mode = false
