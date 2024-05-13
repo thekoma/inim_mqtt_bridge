@@ -5,10 +5,10 @@ import os
 import time
 import logging
 import log
-import redis
 logger = log.setup_custom_logger('root')
 logger.debug('main message')
 
+import redis
 import orjson, json
 import asyncio
 import aiohttp
@@ -18,6 +18,11 @@ from typing import Union
 from fastapi import FastAPI, status, Response, Request
 from fastapi.responses import PlainTextResponse, ORJSONResponse, HTMLResponse
 import inim
+import client as mq
+from datetime import datetime as dt
+
+
+
 
 # Load Environment Variables from file
 
@@ -42,12 +47,12 @@ def main():
     """Main function"""
     # Create a inimCentral object.
 
-    r = redis.Redis(
+    myredis = redis.Redis(
         host=myconst.REDIS_HOST, port=myconst.REDIS_PORT, db=myconst.REDIS_DB, socket_timeout=1
     )
 
     myinim = inim.central(
-        redis=r,
+        redis=myredis,
         username=myconst.EMAIL,
         password=myconst.PASSWORD,
         pin=myconst.PIN,
@@ -55,17 +60,28 @@ def main():
         client_name=myconst.CLIENTNAME,
         device_id=myconst.DEVICEID,
     )
+    mymqtt = mq.mqttLink()
+    mqtt_instance = mymqtt.start()
 
+    # Main Loop
+    while True:
+        mqtt_topic ="python/test"
+        mymqtt.publish(client=mqtt_instance,message=str(dt.now().strftime("%Y%m%d%H%M%S")), topic=mqtt_topic)
+        print(f"n")
+
+        time.sleep(1)
+    # run()
     # Make a request to the remote API.
     # response = remote_api.register_client()
 
     # While loop with sleep for 30 seconds
-    while True:
-        # Check the token validity.
-        response=myinim.GetDeviceAreas()
-        print(response)
-        # time.sleep(myconst.MAXPOLL_TIME)
-        time.sleep(5)
+    # while True:
+    #     # Check the token validity.
+    #     response=myinim.GetDeviceAreas()
+    #     print(response)
+    #     # time.sleep(myconst.MAXPOLL_TIME)
+    #     time.sleep(5)
+
 
 if __name__ == "__main__":
     main()

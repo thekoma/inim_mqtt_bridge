@@ -415,7 +415,7 @@ class central:
         # Check if the token is still valid.
         self.RequestPoll()
         params = {"Node":"","Name":"AlienMobilePro","ClientIP":"","Method":"ReadLogEntries","ClientId":self.client_id,"Token":self.token,"Params":{"DeviceId":self.device_id}}
-        
+
         # The request is a json in a GET parameter (I don't really understand why, seems odd but wathever)
         # To continue i cleanup the request dictionary removing the spaces and convert it to a string.
         request = json.dumps(params).replace(" ", "")
