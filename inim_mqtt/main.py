@@ -60,27 +60,50 @@ def main():
         client_name=myconst.CLIENTNAME,
         device_id=myconst.DEVICEID,
     )
-    mymqtt = mq.mqttLink()
-    mymqtt.start()
+    myinim.WebSocket()
+    # mymqtt = mq.mqttLink(
+    #     mqtt_host=myconst.MQTT_HOST,
+    #     mqtt_port=myconst.MQTT_PORT,
+    #     mqtt_user=myconst.MQTT_USER,
+    #     mqtt_pass=myconst.MQTT_PASS,
+    #     mqtt_topic=myconst.MQTT_TOPIC,
+    #     mqtt_client_id=myconst.MQTT_CLIENTID,
+    #     mqtt_keepalive = myconst.MQTT_KEEPALIVE,
+    #     mqtt_qos = myconst.MQTT_QOS,
+    # )
+    # with mq.mqttLink(
+    #     mqtt_host=myconst.MQTT_HOST,
+    #     mqtt_port=myconst.MQTT_PORT,
+    #     mqtt_user=myconst.MQTT_USER,
+    #     mqtt_pass=myconst.MQTT_PASS,
+    #     mqtt_topic=myconst.MQTT_TOPIC,
+    #     mqtt_keepalive = myconst.MQTT_KEEPALIVE,
+    #     mqtt_qos = myconst.MQTT_QOS,
+    # ) as mymqtt:
+    #     with inim.central(
+    #         redis=myredis,
+    #         username=myconst.EMAIL,
+    #         password=myconst.PASSWORD,
+    #         pin=myconst.PIN,
+    #         client_id=myconst.CLIENTID,
+    #         client_name=myconst.CLIENTNAME,
+    #         device_id=myconst.DEVICEID,
+    #     ) as myinim:
+    #         logger.debug('WEBSOCKET')
+    #         myinim.WebSocket()
+    #         logger.debug('WEBSOCKETWEBSOCKETWEBSOCKETWEBSOCKETWEBSOCKET')
 
-    # Main Loop
-    while True:
-        mqtt_topic ="python/test"
-        mymqtt.publish(message=str(dt.now().strftime("%Y%m%d%H%M%S")), topic=mqtt_topic)
-        print(f"n")
+    #         while True:
+    #             time.sleep(5)
+    #         # counterr = 0
+    #         # while counterr < 1000:
+    #         #     mqtt_topic ="python/test"
+    #         #     mymqtt.publish(message=str(dt.now().strftime("%Y%m%d%H%M%S")), topic=mqtt_topic)
+    #         #     print(f"n")
+    #         #     counterr += 1
+    #         #     time.sleep(0.01)
 
-        time.sleep(1)
-    # run()
-    # Make a request to the remote API.
-    # response = remote_api.register_client()
 
-    # While loop with sleep for 30 seconds
-    # while True:
-    #     # Check the token validity.
-    #     response=myinim.GetDeviceAreas()
-    #     print(response)
-    #     # time.sleep(myconst.MAXPOLL_TIME)
-    #     time.sleep(5)
 
 
 if __name__ == "__main__":

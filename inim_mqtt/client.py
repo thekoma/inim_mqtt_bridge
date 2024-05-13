@@ -61,8 +61,8 @@ class mqttLink:
                     print(f"Failed to connect, return code {reason_code}")
                 # error processing
 
-        def on_disconnect(m_client, userdata, rc):
-            logging.info("Disconnected with result code: %s", rc)
+        def on_disconnect(m_client, userdata,  flags, reason_code, properties):
+            logging.info(f"Disconnected with result code: {reason_code}")
             reconnect_count, reconnect_delay = 0, FIRST_RECONNECT_DELAY
             while reconnect_count < MAX_RECONNECT_COUNT:
                 logging.info("Reconnecting in %d seconds...", reconnect_delay)
@@ -101,7 +101,7 @@ class mqttLink:
 
     def subscribe(self, client: mqtt_client):
         def on_message(client, userdata, msg):
-            print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+            logger.debug(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
         self.m_client.subscribe(self.mqtt_topic)
         self.m_client.on_message = on_message
 
@@ -109,9 +109,16 @@ class mqttLink:
         self.m_client = self.connect_mqtt()
         self.subscribe(self.m_client)
         self.m_client.loop_start()
-        # self.publish(client)
         return self.m_client
 
     def stop(self):
         self.m_client.loop_stop()
         self.m_client.disconnect()
+
+    def __enter__(self):
+        self.start()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # self.stop()
+        time.sleep(0)
