@@ -61,7 +61,7 @@ def main():
         device_id=myconst.DEVICEID,
     )
     mymqtt = mq.mqttLink()
-    mqtt_instance = mymqtt.start()
+    mymqtt.start()
 
     # Main Loop
     while True:
