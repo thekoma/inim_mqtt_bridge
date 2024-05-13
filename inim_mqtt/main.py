@@ -66,7 +66,7 @@ def main():
     # Main Loop
     while True:
         mqtt_topic ="python/test"
-        mymqtt.publish(client=mqtt_instance,message=str(dt.now().strftime("%Y%m%d%H%M%S")), topic=mqtt_topic)
+        mymqtt.publish(message=str(dt.now().strftime("%Y%m%d%H%M%S")), topic=mqtt_topic)
         print(f"n")
 
         time.sleep(1)

@@ -44,14 +44,14 @@ class mqttLink:
         self.mqtt_keepalive = mqtt_keepalive
         self.mqtt_qos = mqtt_qos
         self.mqtt_topic = mqtt_topic
-        global client
         self.first_reconnect_delay = 1
         self.reconnect_rate = 2
         self.max_reconnect_count = 12
         self.max_reconnect_delay = 60
+        self.m_client = None
 
     def connect_mqtt(self) -> mqtt_client:
-        def on_connect(client, userdata, flags, reason_code, properties):
+        def on_connect(m_client, userdata, flags, reason_code, properties):
             if flags.session_present:
                 print("Session Present!")
             if reason_code == 0:
@@ -61,7 +61,7 @@ class mqttLink:
                     print(f"Failed to connect, return code {reason_code}")
                 # error processing
 
-        def on_disconnect(client, userdata, rc):
+        def on_disconnect(m_client, userdata, rc):
             logging.info("Disconnected with result code: %s", rc)
             reconnect_count, reconnect_delay = 0, FIRST_RECONNECT_DELAY
             while reconnect_count < MAX_RECONNECT_COUNT:
@@ -69,7 +69,7 @@ class mqttLink:
                 time.sleep(reconnect_delay)
 
                 try:
-                    client.reconnect()
+                    self.m_client.reconnect()
                     logging.info("Reconnected successfully!")
                     return
                 except Exception as err:
@@ -80,19 +80,19 @@ class mqttLink:
                 reconnect_count += 1
             logging.info("Reconnect failed after %s attempts. Exiting...", reconnect_count)
 
-        client = mqtt_client.Client(mqtt_client.CallbackAPIVersion.VERSION2, self.mqtt_client_id)
-        client.username_pw_set(self.mqtt_user, self.mqtt_pass)
-        client.on_connect = on_connect
-        client.on_disconnect = on_disconnect
-        client.connect(self.mqtt_host, self.mqtt_port, self.mqtt_keepalive)
-        client.loop_start()
-        return client
+        self.m_client = mqtt_client.Client(mqtt_client.CallbackAPIVersion.VERSION2, self.mqtt_client_id)
+        self.m_client.username_pw_set(self.mqtt_user, self.mqtt_pass)
+        self.m_client.on_connect = on_connect
+        self.m_client.on_disconnect = on_disconnect
+        self.m_client.connect(self.mqtt_host, self.mqtt_port, self.mqtt_keepalive)
+        self.m_client.loop_start()
+        return self.m_client
 
     # def publish(self, client, message: str = None):
-    def publish(self, client, message: str = None, topic: str = None):
+    def publish(self, message: str = None, topic: str = None):
         if topic is None:
             topic = self.mqtt_topic
-        result = client.publish(topic, message)
+        result = self.m_client.publish(topic, message)
         status = result[0]
         if status == 0:
             print(f"Send `{message}` to topic `{topic}`")
@@ -102,12 +102,16 @@ class mqttLink:
     def subscribe(self, client: mqtt_client):
         def on_message(client, userdata, msg):
             print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-        client.subscribe(self.mqtt_topic)
-        client.on_message = on_message
+        self.m_client.subscribe(self.mqtt_topic)
+        self.m_client.on_message = on_message
 
     def start(self):
-        client = self.connect_mqtt()
-        self.subscribe(client)
-        client.loop_start()
+        self.m_client = self.connect_mqtt()
+        self.subscribe(self.m_client)
+        self.m_client.loop_start()
         # self.publish(client)
-        return client
+        return self.m_client
+
+    def stop(self):
+        self.m_client.loop_stop()
+        self.m_client.disconnect()
