@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mosquitto
+    group: inim-mqtt
+  name: mosquitto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mosquitto
+      group: inim-mqtt
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: mosquitto
+        group: inim-mqtt
+    spec:
+      containers:
+        - resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          image: eclipse-mosquitto:latest
+          volumeMounts:
+          - name: configs
+            mountPath: /mosquitto/data/users.list
+            subPath: users.list
+          - name: configs
+            mountPath: /mosquitto/config/mosquitto.conf
+            subPath: mosquitto.conf
+          name: mosquitto
+          ports:
+            - containerPort: 1883
+      volumes:
+        - name: configs
+          secret:
+            secretName: mqtt
+      restartPolicy: Always

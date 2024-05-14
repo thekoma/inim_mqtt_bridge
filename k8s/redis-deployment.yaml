@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: redis
+    group: inim-mqtt
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+      group: inim-mqtt
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: redis
+        group: inim-mqtt
+    spec:
+      containers:
+        - resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          image: redis:latest
+          name: redis
+          ports:
+            - containerPort: 6379
+      restartPolicy: Always
