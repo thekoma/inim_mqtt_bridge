@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Andrea Cervesato <andrea.cervesato@gmail.com>"]
 readme = "README.md"
-
+package-mode = false
 [tool.poetry.dependencies]
 python = "^3.12"
 orjson = "^3.10.3"
@@ -21,4 +21,4 @@ websocket-client = "^1.8.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-package-mode = false
+

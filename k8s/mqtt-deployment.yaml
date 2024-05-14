@@ -2,20 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: mosquitto
+    app: mqtt
     group: inim-mqtt
-  name: mosquitto
+  name: mqtt
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mosquitto
+      app: mqtt
       group: inim-mqtt
   strategy: {}
   template:
     metadata:
       labels:
-        app: mosquitto
+        app: mqtt
         group: inim-mqtt
     spec:
       containers:
