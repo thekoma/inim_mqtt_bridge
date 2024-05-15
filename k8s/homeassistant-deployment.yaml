@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: home-assistant
-        image: homeassistant/home-assistant:2023.10
+        image: ha:latest
         resources:
           requests:
             memory: "256Mi"
@@ -26,19 +26,6 @@ spec:
         ports:
         - containerPort: 8123
           name: http
-        - containerPort: 1883
-          name: mqtt
-        volumeMounts:
-        - mountPath: /config
-          name: config
-        - mountPath: /config/configuration.yaml
-          subPath: configuration.yaml
-          name: configmap-file
-        - mountPath: /config/automations.yaml
-          subPath: automations.yaml
-          name: configmap-file
-        - mountPath: /media
-          name: media-volume
         securityContext:
           privileged: true
           capabilities:
@@ -46,14 +33,3 @@ spec:
               - NET_ADMIN
               - NET_RAW
               - SYS_ADMIN
-      # hostNetwork: true
-      volumes:
-      - name: config
-        persistentVolumeClaim:
-          claimName: home-assistant-pvc
-      - name: media-volume
-        hostPath:
-          path: /tmp/media
-      - name: configmap-file
-        configMap:
-          name: home-assistant-configmap

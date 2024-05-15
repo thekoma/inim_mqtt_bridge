@@ -8,6 +8,8 @@ build:
       sync:
         infer:
           - inim_mqtt/*
+    - image: ha
+      context: tools/ha
   local: {}
 manifests:
   rawYaml:

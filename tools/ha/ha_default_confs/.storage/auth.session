@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "auth.session",
+  "data": {
+    "unauthorized_sessions": {
+      "fab74169f89a23dd918018672e5872d21b2e05184ae244193bc7bb549bfb3e9e92ae1dfb1705c1bf9515592f18639748b0b4d9bd0edb9120fbc6a05b036b8f10": "fde0fbbe6e5f4b6d80c26e563cbf9e68"
+    },
+    "key": "8XgjT7rvxM2XXYtsqUfgdvryuX4Qp1BcHRndLD5WYYU="
+  }
+}

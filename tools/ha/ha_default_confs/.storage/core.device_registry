@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "minor_version": 5,
+  "key": "core.device_registry",
+  "data": {
+    "devices": [
+      {
+        "area_id": null,
+        "config_entries": [
+          "d21c86dc1d00c4154d568b4d286081d3"
+        ],
+        "configuration_url": null,
+        "connections": [],
+        "disabled_by": null,
+        "entry_type": "service",
+        "hw_version": null,
+        "id": "1476b8a2781521c7b14e2fb5e10a400d",
+        "identifiers": [
+          [
+            "sun",
+            "d21c86dc1d00c4154d568b4d286081d3"
+          ]
+        ],
+        "manufacturer": null,
+        "model": null,
+        "name_by_user": null,
+        "name": "Sun",
+        "sw_version": null,
+        "via_device_id": null,
+        "serial_number": null,
+        "labels": []
+      }
+    ],
+    "deleted_devices": []
+  }
+}
