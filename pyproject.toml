@@ -14,8 +14,8 @@ requests = "^2.31.0"
 asyncio = "^3.4.3"
 aiohttp = "^3.9.5"
 redis = "^5.0.4"
-paho-mqtt = "^2.1.0"
 websocket-client = "^1.8.0"
+ha-mqtt-discoverable = "^0.13.1"
 
 
 [build-system]

@@ -265,8 +265,8 @@ class central:
 
         # Make the request.
         response = requests.get(f"{self.base_url}", params=params)
-        pretty_response = json.dumps(json.loads(response.text), indent=4)
-        logger.debug(f"{fname} response {pretty_response}")
+        # pretty_response = json.dumps(json.loads(response.text), indent=4)
+        logger.debug(f"{fname} response {response.text}")
         return response
 
     def GetDevicesExtended(self):
@@ -299,8 +299,8 @@ class central:
         # Make the request.
 
         response = requests.get(f"{self.base_url}", params=params)
-        pretty_response = json.dumps(json.loads(response.text), indent=4)
-        logger.debug(f"{fname} response {pretty_response}")
+        # pretty_response = json.dumps(json.loads(response.text), indent=4)
+        logger.debug(f"{fname} response {response.text}")
         return response
 
     def GetDeviceItems(self):
@@ -346,8 +346,8 @@ class central:
         # Make the request.
 
         response = requests.get(f"{self.base_url}", params=params)
-        pretty_response = json.dumps(json.loads(response.text), indent=4)
-        logger.debug(f"{fname} response {pretty_response}")
+        # pretty_response = json.dumps(json.loads(response.text), indent=4)
+        logger.debug(f"{fname} response {response.text}")
         return response.text
 
     def GetDeviceZones(self):
@@ -368,8 +368,8 @@ class central:
         # Make the request.
 
         response = requests.get(f"{self.base_url}", params=params)
-        pretty_response = json.dumps(json.loads(response.text), indent=4)
-        logger.debug(f"{fname} response {pretty_response}")
+        # pretty_response = json.dumps(json.loads(response.text), indent=4)
+        logger.debug(f"{fname} response {response.text}")
         return response.text
 
     def ReadStatus(self):
@@ -390,8 +390,8 @@ class central:
         # Make the request.
 
         response = requests.get(f"{self.base_url}", params=params)
-        pretty_response = json.dumps(json.loads(response.text), indent=4)
-        logger.debug(f"{fname} response {pretty_response}")
+        # pretty_response = json.dumps(json.loads(response.text), indent=4)
+        logger.debug(f"{fname} response {response.text}")
         return response.text
 
     def ReadItem(self):
@@ -412,8 +412,8 @@ class central:
         # Make the request.
 
         response = requests.get(f"{self.base_url}", params=params)
-        pretty_response = json.dumps(json.loads(response.text), indent=4)
-        logger.debug(f"{fname} response {pretty_response}")
+        # pretty_response = json.dumps(json.loads(response.text), indent=4)
+        logger.debug(f"{fname} response {response.text}")
         return response.text
 
     def ReadLogEntries(self):
@@ -434,8 +434,8 @@ class central:
         # Make the request.
 
         response = requests.get(f"{self.base_url}", params=params)
-        pretty_response = json.dumps(json.loads(response.text), indent=4)
-        logger.debug(f"{fname} response {pretty_response}")
+        # pretty_response = json.dumps(json.loads(response.text), indent=4)
+        logger.debug(f"{fname} response {response.text}")
         return response.text
 
     def ReadUnreadyZones(self):
@@ -456,8 +456,8 @@ class central:
         # Make the request.
 
         response = requests.get(f"{self.base_url}", params=params)
-        pretty_response = json.dumps(json.loads(response.text), indent=4)
-        logger.debug(f"{fname} response {pretty_response}")
+        # pretty_response = json.dumps(json.loads(response.text), indent=4)
+        logger.debug(f"{fname} response {response.text}")
         return response.text
 
     def WebSocket(self):

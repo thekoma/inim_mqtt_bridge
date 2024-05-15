@@ -31,7 +31,7 @@ MAINPOLLING = os.getenv("MAINPOLLING", 10 * _1_sec)
 
 # Redis
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
-REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 REDIS_DB = os.getenv("REDIS_DB", "0")
 
 # MQTT

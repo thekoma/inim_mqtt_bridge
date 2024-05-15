@@ -1,0 +1,31 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+metadata:
+  name: inim-mqtt-env
+build:
+  artifacts:
+    - image: ha
+      context: tools/ha
+  local: {}
+manifests:
+  rawYaml:
+    - k8s/homeassistant-cm.yaml
+    - k8s/homeassistant-deployment.yaml
+    - k8s/homeassistant-service.yaml
+    - k8s/homeassistant-pvc.yaml
+    - k8s/mqtt-deployment.yaml
+    - k8s/mqtt-secret.yaml
+    - k8s/mqtt-service.yaml
+    - k8s/redis-deployment.yaml
+    - k8s/redis-service.yaml
+portForward:
+  - resourceType: service
+    resourceName: mqtt
+    port: 1883
+    address: 0.0.0.0
+  - resourceType: service
+    resourceName: home-assistant
+    port: 8123
+    address: 0.0.0.0
+deploy:
+  kubectl: {}
