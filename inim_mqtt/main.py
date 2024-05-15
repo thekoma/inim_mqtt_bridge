@@ -7,7 +7,7 @@ import logging
 import log
 logger = log.setup_custom_logger('root')
 logger.info('Loaded Logger configuration')
-
+import sys
 import redis
 import orjson, json
 import asyncio
@@ -102,9 +102,12 @@ def main():
                             )
     while True:
         process_sensors(myinim=myinim, device_info=myinim_device_info, mqtt_settings=mqtt_settings)
+        process_areas(myinim=myinim, device_info=myinim_device_info, mqtt_settings=mqtt_settings)
         time.sleep(5)
 
 def get_sensor_group(sensor_name):
+
+  # TODO Spostare logica nelle variabili esterne
   binary_sensors_types={
     "door": ["porta", "cancello", "door", "gate"],
     "window": ["fin", "finestra", "windows", "lucernario"],
@@ -119,6 +122,58 @@ def get_sensor_group(sensor_name):
 
   return None  # No match found
 
+def process_areas(myinim, device_info, mqtt_settings):
+    areas=json.loads(myinim.GetDeviceAreas())
+    zones=areas["Data"]
+
+    for zone in zones:
+        
+        zone_armed=zone["Armed"]
+        zone_armed=zone["Armed"]
+        zone_id=zone["Id"]
+        zone_alarm=zone["Alarm"]
+        zone_alarmemory=zone["AlarmMemory"]
+        zone_tamper=zone["Tamper"]
+        zone_tampermemory=zone["TamperMemory"]
+        zone_icon=None
+
+
+        zone_class="lock"
+        zone_name=f'Zone {zone["Name"]} Armed'
+        zone_unique_id=f'{device_info.name}_zone_armed_{zone_id}'
+        zone_info = BinarySensorInfo(name=zone_name, icon=zone_icon ,device_class=zone_class, unique_id=zone_unique_id, device=device_info)
+
+        binary_settings = Settings(mqtt=mqtt_settings, entity=zone_info)
+
+        # Instantiate the sensor
+        binary_sensor = BinarySensor(binary_settings)
+        # Start the sensor
+        binary_sensor.set_attributes(zone)
+
+        # Change the state of the sensor, publishing an MQTT message that gets picked up by HA
+        if int(zone_armed) == 1:
+            binary_sensor.off()
+        else:
+            binary_sensor.on()
+
+        zone_class="tamper"
+        zone_name=f'Zone {zone["Name"]} Tamper'
+        zone_unique_id=f'{device_info.name}_zone_tamper_{zone_id}'
+        zone_info = BinarySensorInfo(name=zone_name, icon=zone_icon ,device_class=zone_class, unique_id=zone_unique_id, device=device_info)
+
+        binary_settings = Settings(mqtt=mqtt_settings, entity=zone_info)
+
+        # Instantiate the sensor
+        binary_sensor = BinarySensor(binary_settings)
+        # Start the sensor
+        binary_sensor.set_attributes(zone)
+
+        # Change the state of the sensor, publishing an MQTT message that gets picked up by HA
+        if int(zone_tamper) != 0:
+            binary_sensor.on()
+        else:
+            binary_sensor.off()
+        
 def process_sensors(myinim, device_info, mqtt_settings):
     deviceZones=json.loads(myinim.GetDeviceZones())
     sensors=deviceZones["Data"]
@@ -148,18 +203,18 @@ def process_sensors(myinim, device_info, mqtt_settings):
         sensor_unique_id=f'{device_info.name}_alarm_sensor_{sensor_id}'
         sensor_info = BinarySensorInfo(name=sensor_name, icon=sensor_icon ,device_class=sensor_class, unique_id=sensor_unique_id, device=device_info)
 
-        motion_settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
+        binary_settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
 
         # Instantiate the sensor
-        motion_sensor = BinarySensor(motion_settings)
+        binary_sensor = BinarySensor(binary_settings)
         # Start the sensor
-        motion_sensor.set_attributes(sensor)
+        binary_sensor.set_attributes(sensor)
 
         # Change the state of the sensor, publishing an MQTT message that gets picked up by HA
         if int(sensor["Status"]) == 2:
-            motion_sensor.on()
+            binary_sensor.on()
         else:
-            motion_sensor.off()
+            binary_sensor.off()
 
 
 if __name__ == "__main__":
