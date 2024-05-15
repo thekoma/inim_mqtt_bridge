@@ -6,7 +6,7 @@ import time
 import logging
 import log
 logger = log.setup_custom_logger('root')
-logger.debug('Loaded Logger configuration')
+logger.info('Loaded Logger configuration')
 
 import redis
 import orjson, json
@@ -65,6 +65,8 @@ def main():
             mqtt_keepalive = myconst.MQTT_KEEPALIVE,
             mqtt_qos = myconst.MQTT_QOS,
         )
+
+    # Start the mqtt client
     mqtt_client=mymqtt.start()
 
 
@@ -78,22 +80,29 @@ def main():
         device_id=myconst.DEVICEID,
     )
 
-
+    # Mqtt Settings for ha_mqtt_discoverable library
     mqtt_settings = Settings.MQTT(host=myconst.MQTT_HOST, port=myconst.MQTT_PORT
                                 , username=myconst.MQTT_USER
                                 , password=myconst.MQTT_PASS
                                 , keepalive=myconst.MQTT_KEEPALIVE
                                 , qos=myconst.MQTT_QOS
                                 )
+    # TODO If multiple centrals we need to iterate. and create an object each.
+    
+    device=json.loads(myinim.GetDevices())["Data"][0]
+
     myinim_device_info = DeviceInfo(
-                                identifiers=["inim_alarm", "allarmazzo"]
-                                , name="centrale01"
-                                , manufacturer="inim"
-                                , sw_version="v0.0.0.1"
+                                identifiers=[ f"inim_{device['Id']}"  ]
+                                , name=f"inim_{device['Id']}"
+                                , model=f"{device['ModelFamily']}-{device['ModelNumber']}"
+                                , serial_number=device["SerialNumber"]
+                                , manufacturer="Inim Electronics"
+                                , sw_version=f"{device['FirmwareVersionMajor']}.{device['FirmwareVersionMinor']}"
+                                , configuration_url="https://my.inimcloud.com/login"
                             )
     while True:
         process_sensors(myinim=myinim, device_info=myinim_device_info, mqtt_settings=mqtt_settings)
-        time.sleep(10)
+        time.sleep(5)
 
 def get_sensor_group(sensor_name):
   binary_sensors_types={
@@ -117,7 +126,7 @@ def process_sensors(myinim, device_info, mqtt_settings):
     for sensor in sensors:
         sensor_name=sensor["Name"]
         sensor_type=sensor["Type"]
-        sensor_icon=""
+        sensor_icon=None
         sensor_class="unknown"
         if sensor_type == 1:
             sensor_class="tamper"
@@ -132,14 +141,12 @@ def process_sensors(myinim, device_info, mqtt_settings):
         elif sensor_type == 4:
             sensor_class="sound"
 
-
-
         sensor_id=sensor["Id"]
         sensor_areas=sensor["Areas"]
         sensor_disabled=bool(sensor["Bypassed"])
         # https://www.home-assistant.io/integrations/binary_sensor/#device-class
-        sensor_unique_id=f'inim_alarm_sensor_{sensor_id}'
-        sensor_info = BinarySensorInfo(name=sensor_name, sensor_icon=sensor_icon ,device_class=sensor_class, unique_id=sensor_unique_id, device=device_info)
+        sensor_unique_id=f'{device_info.name}_alarm_sensor_{sensor_id}'
+        sensor_info = BinarySensorInfo(name=sensor_name, icon=sensor_icon ,device_class=sensor_class, unique_id=sensor_unique_id, device=device_info)
 
         motion_settings = Settings(mqtt=mqtt_settings, entity=sensor_info)
 
@@ -154,14 +161,6 @@ def process_sensors(myinim, device_info, mqtt_settings):
         else:
             motion_sensor.off()
 
-
-if __name__ == "__main__":
-    main()
-    # Start listening for changes via websocket
-    # myinim.WebSocket()
-    while True:
-        sensors=process_sensors(myinim)
-        time.sleep(10)
 
 if __name__ == "__main__":
     main()

@@ -8,7 +8,7 @@ from datetime import datetime as dt
 import paho.mqtt
 
 logger = logging.getLogger('root')
-logger.debug('Loading inim module.')
+logger.debug('Loading mqtt module.')
 
 MQTT_CLIENT_ID = f'publish-{random.randint(0, 1000)}'
 MQTT_HOST = myconst.MQTT_HOST
@@ -39,6 +39,7 @@ class mqttLink:
 
         self.mqtt_client_id = mqtt_client_id
         self.mqtt_host = mqtt_host
+        print(f"MQTT_HOST: {self.mqtt_host}")
         self.mqtt_port = mqtt_port
         self.mqtt_user = mqtt_user
         self.mqtt_pass = mqtt_pass
@@ -52,15 +53,13 @@ class mqttLink:
         self.m_client = None
 
     def connect_mqtt(self) -> mqtt_client:
-        def on_connect(m_client, userdata, flags, reason_code, properties):
-            if flags.session_present:
-                print("Session Present!")
+        def on_connect(m_client, userdata, flags, reason_code, properties=None):
             if reason_code == 0:
                 # success connect
-                print("Connected to MQTT Broker!")
+                logger.info("Connected to MQTT Broker!")
             if reason_code > 0:
-                    print(f"Failed to connect, return code {reason_code}")
-                # error processing
+                    logger.error(f"Failed to connect, return code {reason_code}")
+
 
         def on_disconnect(m_client, userdata,  flags, reason_code, properties):
             logger.info(f"Disconnected with result code: {reason_code}")
@@ -82,21 +81,14 @@ class mqttLink:
             logger.info("Reconnect failed after %s attempts. Exiting...", reconnect_count)
             sys.exit(188)
 
-        logger.debug(f"Connecting to MQTT Broker: {self.mqtt_host} on port {self.mqtt_port}")
 
-        reconnect_count, reconnect_delay = 1, FIRST_RECONNECT_DELAY
-        while reconnect_count < MAX_RECONNECT_COUNT:
-            try:
-                self.m_client = mqtt_client.Client(self.mqtt_client_id)
-                return
-            except Exception as err:
-                logger.error("%s. Error connecting to MQTT Broker. Retrying...", err)
-                reconnect_count += 1
-                time.sleep(reconnect_delay)
 
-        self.m_client.username_pw_set(self.mqtt_user, self.mqtt_pass)
+        logger.debug("Creating MQTT client")
+        self.m_client = mqtt_client.Client(self.mqtt_client_id)
         self.m_client.on_connect = on_connect
         self.m_client.on_disconnect = on_disconnect
+        self.m_client.username_pw_set(self.mqtt_user, self.mqtt_pass)
+        logger.info(f"Connecting to {self.mqtt_host}")
         self.m_client.connect(self.mqtt_host, self.mqtt_port, self.mqtt_keepalive)
         self.m_client.loop_start()
         return self.m_client
@@ -120,14 +112,9 @@ class mqttLink:
         the_client.on_message = on_message
 
     def start(self):
-        logger.info("Starting MQTT Client")
         client = self.connect_mqtt()
-        # self.subscribe(self.m_client)
-        logger.info(f"Subscribing to {self.mqtt_topic}")
         self.subscribe(self.m_client)
-        logger.info(f"Starting loop to {self.mqtt_topic}")
-        self.m_client.loop_start()
-        return self.m_client
+        return client
 
     def stop(self):
         self.m_client.loop_stop()

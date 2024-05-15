@@ -28,7 +28,8 @@ def setup_custom_logger(name):
     # handler.setFormatter(formatter)
 
     logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
+    # logger.setLevel(logging.DEBUG)
+    logger.setLevel(myconst.LOGLEVEL)
     logger.addHandler(handler)
     logger.debug('Loading logging condifiguration for %s.', name)
 

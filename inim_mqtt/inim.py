@@ -6,6 +6,7 @@ import json
 import redis
 import inspect
 import sys
+import os
 import websocket
 import ssl
 import asyncio
@@ -235,7 +236,7 @@ class central:
             self.set_new_poll_expiry()
             return response
         else:
-            logger.info(f"{fname} Skipping Poll not expired yet.")
+            logger.debug(f"{fname} Skipping Poll not expired yet.")
             return
 
     def GetDevices(self):
@@ -267,7 +268,7 @@ class central:
         response = requests.get(f"{self.base_url}", params=params)
         # pretty_response = json.dumps(json.loads(response.text), indent=4)
         logger.debug(f"{fname} response {response.text}")
-        return response
+        return response.text
 
     def GetDevicesExtended(self):
         fname=sys._getframe().f_code.co_name
@@ -330,7 +331,6 @@ class central:
 
     def GetDeviceAreas(self):
         fname=sys._getframe().f_code.co_name
-        """List all sensors."""
         # Check if the token is still valid.
         self.RequestPoll()
         params = {"Node":"","Name":"AlienMobilePro","ClientIP":"","Method":"GetDeviceAreas","ClientId":self.client_id,"Token":self.token,"Params":{"DeviceId":self.device_id}}

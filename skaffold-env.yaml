@@ -27,5 +27,9 @@ portForward:
     resourceName: home-assistant
     port: 8123
     address: 0.0.0.0
+  - resourceType: service
+    resourceName: redis
+    port: 6379
+    address: 0.0.0.0
 deploy:
   kubectl: {}
