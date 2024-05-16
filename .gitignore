@@ -5,3 +5,4 @@ tests/test.sh
 INFO.md
 log.log
 inim_mqtt/__pycache__
+venv

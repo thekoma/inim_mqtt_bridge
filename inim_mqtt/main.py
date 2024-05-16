@@ -124,6 +124,7 @@ def get_sensor_group(sensor_name):
 
 def process_areas(myinim, device_info, mqtt_settings):
     areas=json.loads(myinim.GetDeviceAreas())
+    zone=[]
     zones=areas["Data"]
 
     for zone in zones:
@@ -216,6 +217,7 @@ def process_sensors(myinim, device_info, mqtt_settings):
         else:
             binary_sensor.off()
 
+def 
 
 if __name__ == "__main__":
     main()
