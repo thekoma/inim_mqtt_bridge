@@ -194,7 +194,7 @@ class central:
             logger.debug(f"{fname} response {pretty_response}")
             return response
         else:
-            logger.info(f"{fname} Skipping Authenticate not expired yet.")
+            logger.debug(f"{fname} Skipping Authenticate not expired yet.")
             return
 
     def RequestPoll(self):
@@ -500,3 +500,5 @@ class central:
     def __exit__(self, exc_type, exc_val, exc_tb):
         time.sleep(0)
         return self
+
+# define a new class for the zones
